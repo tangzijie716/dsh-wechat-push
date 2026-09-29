@@ -74,13 +74,13 @@ HTML 通常来自 `mp_render`，但任何内联样式的 HTML 都可以。
 
 ```jsonc
 {
-  "html_path": "D:\\WeChat-Publishing\\html\\AI-daily-20260927085547.html",
-  "title": "AI 日报｜…",
+  "html_path": "./content/article.html",
+  "title": "示例文章",
   "cover": {
-    "path": "D:\\WeChat-Publishing\\pic\\AI-daily-20260927085547.png"
+    "path": "./content/cover.png"
   },
   "images": [
-    { "token": "dsh-mp-image-0", "path": "D:\\WeChat-Publishing\\pic\\AI-daily-20260927085547.png" }
+    { "token": "dsh-mp-image-0", "path": "./content/image-01.png" }
   ]
 }
 ```
@@ -109,7 +109,7 @@ HTML 通常来自 `mp_render`，但任何内联样式的 HTML 都可以。
 - id: wechat-push
   config:
     defaultCoverMediaId: '' # 有已上传素材时填它，优先使用
-    defaultCover: 'D:\WeChat-Publishing\pic\AI-daily-20260927085547.png'
+    defaultCover: './content/cover.png'
 ```
 
 两者都没配的话，一次点击会告诉你该设哪个键。
