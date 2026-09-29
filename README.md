@@ -2,8 +2,7 @@
 
 DeepSeek Harness 插件：把 **HTML 正文与图片直接投递到微信公众号草稿箱**。
 
-它是 `dsh-wechat-mp` 拆出来的**投递半边**。另一半是
-`dsh-wechat-html`（markdown → 微信可用 HTML）。两个插件互相独立：
+它可以与`dsh-wechat-html`（markdown → 微信可用 HTML）结合使用。两个插件互相独立：
 本插件**不排版**——直接给它 HTML 文本或文件即可，所以不装排版插件也能用。
 
 **它永远不群发**：草稿建好之后，仍然要人在公众平台后台点发送。
