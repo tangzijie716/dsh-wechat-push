@@ -1,11 +1,13 @@
-# dsh-wechat-push —— 投递半边（需要公众号凭据）
+# dsh-wechat-push —— 投递半边
 #
 # 只做一件事：把 HTML 正文 + 图片投进微信公众号草稿箱。不排版、不群发。
 # 排版由 dsh-wechat-html 负责；但这个插件单独装也能用——直接给它 HTML 文本或文件即可。
 #
+# 凭据不在配置里，也没有默认来源：每个调用都必须由调用方传入
+# `credentials_path`（一个含 WECHAT_MP_APPID / WECHAT_MP_SECRET 的文件路径）。
+# 传路径而不传密钥，这样密钥不会进入工具参数记录。
+#
 # 可覆盖的 config（在 profile 的 cordis.patch.yml 里按 id: wechat-push 改）：
-#   appIdRef:        'WECHAT_MP_APPID'   # 凭据引用名，不是密钥本身
-#   appSecretRef:    'WECHAT_MP_SECRET'
 #   tokenCacheDir:   ''                  # '' → 系统临时目录
 #   baseUrl:         'https://api.weixin.qq.com'
 #   defaultAuthor:   ''                  # 作者署名缺省值

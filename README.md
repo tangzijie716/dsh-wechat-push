@@ -16,29 +16,37 @@ dsh plugin --profile web add file:.
 ```
 
 本插件要求 Node.js 18 或更高版本。运行时还需要由 DeepSeek Harness 提供
-`@deepseek-ai/dsh-credentials`、`@deepseek-ai/dsh-tools` 和
-`@deepseek-ai/dsh-typert-protocol` 三个宿主依赖。
+`@deepseek-ai/dsh-tools` 和 `@deepseek-ai/dsh-typert-protocol` 两个宿主依赖。
 
 ## 凭据
 
-API 工具读两个凭据**引用名**。配置里放的是名字，值留在 dsh 的凭据提供方，所以这份配置可以放心提交。
+**本插件不认识任何「默认凭据来源」。** 它不读进程环境变量、不读 `$DSH_HOME`、不读任何受管凭据库。
+每次调用都必须由调用方把**凭据文件的路径**传进来：
 
-| 引用名 | 是什么 |
+```
+mp_create_draft(credentials_path="D:\WeChat-Publishing\.env", ...)
+mp_upload_image(credentials_path="D:\WeChat-Publishing\.env", path="...")
+mp_list_drafts(credentials_path="D:\WeChat-Publishing\.env", count=3)
+```
+
+那个文件里要有两个名字（`.env` 的 `NAME=value`，或 `.credentials.yaml` 的 `refs:` 段，两种都认）：
+
+| 名字 | 是什么 |
 |---|---|
 | `WECHAT_MP_APPID` | 公众号的 AppID |
 | `WECHAT_MP_SECRET` | 公众号的 AppSecret |
 
-任何 dsh 能解析凭据的地方都行——进程环境变量、项目 `.env`、`$DSH_HOME/.env`、`$DSH_HOME/.credentials.yaml`：
-
-```bash
-export WECHAT_MP_APPID=wx...
-export WECHAT_MP_SECRET=...
-```
+**为什么传路径而不是传密钥**：DSH 的工具参数会进会话记录与事件日志（`dsh-tools` 没有敏感参数的概念）。
+传路径则密钥只在插件进程内被读出使用，**永远不会离开进程**。
 
 两个值都在 公众平台 → 设置与开发 → 基本配置。**AppSecret 只显示一次**；重新生成会让其它
-系统手里的 token 立刻失效。
+系统手里的 token 立刻失效（报 `40125 invalid appsecret`）。
 
-没有凭据时这几个工具**不会挂载**（它们只在凭据提供方被组合进来后才注册），而不是挂出一堆注定失败的入口。
+缺 `credentials_path`、读不到文件、或文件里缺变量，都会在**调用时**报出明确的错误——
+工具本身**始终挂载**（不再因为「部署没配凭据」而整体消失）。
+
+> 「发公众号」按钮不再可用：它的调用方是浏览器里的一次点击，既不该拿到密钥、也没有「路径」可传。
+> 请改用 `mp_create_draft` 工具投递。
 
 ## 工具
 
@@ -141,13 +149,12 @@ HTML 通常来自 `mp_render`，但任何内联样式的 HTML 都可以。
 
 ## 配置
 
-全部可选；写在 profile 的 `cordis.patch.yml` 里，按行 id `wechat-push` 改：
+全部可选；写在 profile 的 `cordis.patch.yml` 里，按行 id `wechat-push` 改。
+**这里没有凭据项**——密钥不在配置里，每个调用自带 `credentials_path`（见上文「凭据」）。
 
 ```yaml
 - id: wechat-push
   config:
-    appIdRef: WECHAT_MP_APPID
-    appSecretRef: WECHAT_MP_SECRET
     tokenCacheDir: ''       # '' → 系统临时目录
     baseUrl: https://api.weixin.qq.com
     defaultAuthor: ''
